@@ -1,0 +1,35 @@
+# Out-of-source CMake builds, including downloaded dependencies and test results.
+/build/
+/build-*/
+/cmake-build-*/
+
+# Machine-specific CMake presets and generated clangd compilation database.
+/CMakeUserPresets.json
+/compile_commands.json
+
+# Language-server caches and editor temporary files.
+/.cache/
+*.swp
+*.swo
+*~
+
+# Compiled objects, libraries, executables, and debugging symbols.
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+*.lib
+*.exe
+*.pdb
+*.dSYM/
+
+# Coverage and profiling output.
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+
+# macOS directory metadata.
+.DS_Store
