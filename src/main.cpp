@@ -14,7 +14,6 @@ int main() {
     std::cout << "(nil)\n";
   }
 
-  // overwrite-test
   store.set("server:name", "Latch-overwrite");
   value = store.get("server:name");
   std::cout << *value << '\n';

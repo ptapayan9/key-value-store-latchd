@@ -8,10 +8,8 @@ void Store::set(const std::string &key, const std::string &value) {
 std::optional<std::string> Store::get(const std::string &key) const {
 
   auto result = data_.find(key);
-
   if (result != data_.end()) {
     return result->second;
   }
-
   return std::nullopt;
 }
