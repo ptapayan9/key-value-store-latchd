@@ -15,3 +15,5 @@ std::optional<std::string> Store::get(const std::string &key) const {
 }
 
 bool Store::del(const std::string &key) { return data_.erase(key) != 0; }
+
+bool Store::exists(const std::string &key) const { return data_.contains(key); }

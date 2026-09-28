@@ -14,6 +14,25 @@ TEST_CASE("GET returns a previously stored value", "[store]") {
   REQUIRE(*value == "latch");
 }
 
+TEST_CASE("EXISTS check if the key provided exists") {
+  Store store;
+
+  bool ex1 = store.exists("");
+  REQUIRE_FALSE(ex1);
+
+  store.set("", "test");
+  store.set("server-name", "");
+
+  bool ex2 = store.exists("");
+  REQUIRE(ex2 == true);
+
+  bool existingkey = store.exists("server-name");
+  REQUIRE(existingkey == true);
+
+  store.del("server-name");
+  REQUIRE_FALSE(store.exists("server-name"));
+}
+
 TEST_CASE("DEL deletes the specific kvp") {
   // Delete;
   Store store;
