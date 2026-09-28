@@ -1,0 +1,31 @@
+name: CI # Label shown in GitHub's Actions tab.
+# Events that start this workflow.
+on:
+  push: # Run when commits reach main.
+    branches: [main]
+  pull_request: # Check proposed changes targeting main.
+    branches: [main]
+permissions:
+  contents: read # Allow reading repository contents without write access.
+jobs:
+  build-and-test: # Identifier for the job that compiles and tests the app.
+    runs-on: ubuntu-24.04 # Run on a GitHub-hosted Ubuntu machine.
+    timeout-minutes: 10 # Stop the job if it runs longer than ten minutes.
+    steps: # Steps run in order on the same machine.
+      # Download the repository into the runner's working directory.
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Check available tools
+        # The pipe introduces a multiline shell script.
+        run: |
+          cmake --version
+          g++ --version
+      # Generate build files for a Debug build and enable the test suite.
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+      # Compile the application, storage library, and tests with four workers.
+      - name: Build
+        run: cmake --build build --parallel 4
+      # Show diagnostics on failure and fail if no tests are discovered.
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --no-tests=error
