@@ -14,6 +14,28 @@ TEST_CASE("GET returns a previously stored value", "[store]") {
   REQUIRE(*value == "latch");
 }
 
+TEST_CASE("DEL deletes the specific kvp") {
+  // Delete;
+  Store store;
+  store.set("server:delete", "delete-me");
+  bool isdeleted = store.del("server:delete");
+
+  REQUIRE(isdeleted == true);
+  REQUIRE_FALSE(store.get("server:delete").has_value());
+}
+
+TEST_CASE("DEL deleting the same key should return fasle") {
+
+  Store store;
+  store.set("server:name", "delete-me");
+  bool isdeletedone = store.del("server:name");
+
+  REQUIRE(isdeletedone == true);
+
+  bool isdeletedtwo = store.del("server:name");
+  REQUIRE_FALSE(isdeletedtwo);
+}
+
 TEST_CASE("SET replaces the value of an existing key", "[store]") {
   Store store;
   store.set("server:name", "latch");

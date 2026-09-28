@@ -13,3 +13,5 @@ std::optional<std::string> Store::get(const std::string &key) const {
   }
   return std::nullopt;
 }
+
+bool Store::del(const std::string &key) { return data_.erase(key) != 0; }

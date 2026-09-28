@@ -10,6 +10,8 @@ public:
 
   std::optional<std::string> get(const std::string &key) const;
 
+  bool del(const std::string &key);
+
 private:
   std::unordered_map<std::string, std::string> data_;
 };
