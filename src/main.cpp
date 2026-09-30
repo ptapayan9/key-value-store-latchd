@@ -1,8 +1,28 @@
 #include "store.hpp"
 #include <iostream>
-#include <optional>
 #include <sstream>
 #include <string>
+
+enum class CommandType { Get, Set, Del, Exists, Quit, Unknown };
+
+CommandType parse_command(const std::string &command) {
+  if (command == "GET") {
+    return CommandType::Get;
+  }
+  if (command == "SET") {
+    return CommandType::Set;
+  }
+  if (command == "DEL") {
+    return CommandType::Del;
+  }
+  if (command == "EXISTS") {
+    return CommandType::Exists;
+  }
+  if (command == "QUIT") {
+    return CommandType::Quit;
+  }
+  return CommandType::Unknown;
+}
 
 int main() {
 
@@ -11,10 +31,6 @@ int main() {
 
   while (std::getline(std::cin, line)) {
 
-    if (line == "QUIT") {
-      break;
-    }
-
     std::istringstream input{line};
     std::string command;
 
@@ -22,45 +38,58 @@ int main() {
       continue;
     }
 
-    if (command == "GET") {
-
-      std::string key, extra;
-      if (!(input >> key)) {
-        std::cout << "ERR expected GET key";
-        continue;
-      }
-
-      if (input >> extra) {
-        std::cout << "ERR expected SET key value \n";
-        continue;
-      }
-
-      auto value = store.get(key);
-      if (!(value.has_value())) {
-        std::cout << "(nil)";
-        continue;
-      }
-
-      std::cout << *value << "\n";
-    }
-
-    if (command == "SET") {
-
+    switch (parse_command(command)) {
+    case CommandType::Set: {
       std::string key, value, extra;
       if (!(input >> key >> value)) {
-        std::cout << "ERR expected SET key value \n";
-        continue;
+        std::cout << "ERR expected SET key value\n";
+        break;
       }
 
       if (input >> extra) {
-        std::cout << "ERR expected SET key value \n";
-        continue;
+        std::cout << "ERR expected SET key value\n";
+        break;
       }
 
       store.set(key, value);
       std::cout << "OK\n";
-    } else {
-      std::cout << "ER unkown command\n";
+      break;
+    }
+    case CommandType::Get: {
+      std::string key, extra;
+      if (!(input >> key)) {
+        std::cout << "ERR expected GET key\n";
+        break;
+      }
+
+      if (input >> extra) {
+        std::cout << "ERR expected GET key\n";
+        break;
+      }
+
+      auto value = store.get(key);
+      if (!(value.has_value())) {
+        std::cout << "(nil)\n";
+        break;
+      }
+      std::cout << *value << '\n';
+      break;
+    }
+    case CommandType::Quit: {
+      std::string extra;
+      if (input >> extra) {
+        std::cout << "ERR expected QUIT with no arguments\n";
+        break;
+      }
+      return 0; // Exit main, not just the switch.
+    }
+    case CommandType::Del:
+    case CommandType::Exists:
+      std::cout << "ERR command not implemented yet\n";
+      break;
+    case CommandType::Unknown:
+      std::cout << "ERR unknown command\n";
+      break;
     }
   }
 
