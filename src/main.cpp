@@ -1,22 +1,68 @@
 #include "store.hpp"
 #include <iostream>
+#include <optional>
+#include <sstream>
+#include <string>
 
 int main() {
 
   Store store;
-  store.set("server:name", "latch");
+  std::string line;
 
-  auto value = store.get("server:name");
+  while (std::getline(std::cin, line)) {
 
-  if (value.has_value()) {
-    std::cout << *value << '\n';
-  } else {
-    std::cout << "(nil)\n";
+    if (line == "QUIT") {
+      break;
+    }
+
+    std::istringstream input{line};
+    std::string command;
+
+    if (!(input >> command)) {
+      continue;
+    }
+
+    if (command == "GET") {
+
+      std::string key, extra;
+      if (!(input >> key)) {
+        std::cout << "ERR expected GET key";
+        continue;
+      }
+
+      if (input >> extra) {
+        std::cout << "ERR expected SET key value \n";
+        continue;
+      }
+
+      auto value = store.get(key);
+      if (!(value.has_value())) {
+        std::cout << "(nil)";
+        continue;
+      }
+
+      std::cout << *value << "\n";
+    }
+
+    if (command == "SET") {
+
+      std::string key, value, extra;
+      if (!(input >> key >> value)) {
+        std::cout << "ERR expected SET key value \n";
+        continue;
+      }
+
+      if (input >> extra) {
+        std::cout << "ERR expected SET key value \n";
+        continue;
+      }
+
+      store.set(key, value);
+      std::cout << "OK\n";
+    } else {
+      std::cout << "ER unkown command\n";
+    }
   }
-
-  store.set("server:name", "Latch-overwrite");
-  value = store.get("server:name");
-  std::cout << *value << '\n';
 
   return 0;
 }
