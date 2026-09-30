@@ -39,6 +39,23 @@ int main() {
     }
 
     switch (parse_command(command)) {
+
+    case CommandType::Del: {
+      std::string key, extra;
+
+      if (!(input >> key)) {
+        std::cout << "ERR expected KEY value\n";
+        break;
+      }
+
+      if (input >> extra) {
+        std::cout << "ERR expect only KEY value \n";
+      }
+
+      store.del(key);
+      std::cout << "Deleted " << key << "\n";
+      break;
+    }
     case CommandType::Set: {
       std::string key, value, extra;
       if (!(input >> key >> value)) {
@@ -83,7 +100,6 @@ int main() {
       }
       return 0; // Exit main, not just the switch.
     }
-    case CommandType::Del:
     case CommandType::Exists:
       std::cout << "ERR command not implemented yet\n";
       break;
